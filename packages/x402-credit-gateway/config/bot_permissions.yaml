@@ -1,0 +1,11 @@
+version: 1
+permissions:
+  level_0:
+    allowed: [status.read]
+  level_1:
+    allowed: [task.submit, task.cancel, task.retry, model.route]
+  level_2:
+    allowed: [service.restart, build.apply_patch, deploy.local]
+  level_3:
+    allowed: [wallet.transfer_real, destructive.system]
+    requires_dual_confirmation: true

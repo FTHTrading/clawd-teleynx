@@ -1,0 +1,12 @@
+version: 1
+priorities:
+  - health
+  - uptime
+  - mission_alignment
+  - latency
+  - throughput
+service_modes:
+  normal: healthy
+  degraded: partial_operation
+  locked: restricted_actions
+  signed_out: no_privileged_actions

@@ -1,0 +1,38 @@
+{
+    "timestamp":  "2026-04-18T07:15:28.7316379-04:00",
+    "degraded":  false,
+    "services":  [
+                     {
+                         "name":  "jefe-kernel",
+                         "pid":  null,
+                         "running":  true,
+                         "healthy":  true,
+                         "detail":  "http_200",
+                         "criticality":  "critical"
+                     },
+                     {
+                         "name":  "ollama-local",
+                         "pid":  93200,
+                         "running":  true,
+                         "healthy":  true,
+                         "detail":  "http_200",
+                         "criticality":  "critical"
+                     },
+                     {
+                         "name":  "apostle-chain",
+                         "pid":  null,
+                         "running":  true,
+                         "healthy":  true,
+                         "detail":  "http_200",
+                         "criticality":  "high"
+                     },
+                     {
+                         "name":  "clawdbot-runner",
+                         "pid":  33160,
+                         "running":  true,
+                         "healthy":  true,
+                         "detail":  "http_200",
+                         "criticality":  "high"
+                     }
+                 ]
+}

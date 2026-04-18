@@ -1,0 +1,52 @@
+# Dependencies
+**/node_modules/
+.venv/
+venv/
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# Environment and secrets
+.env
+.env.*
+!.env.template
+**/*.pem
+**/*.key
+**/*private_key*
+**/*secret*
+
+# Build and caches
+**/dist/
+**/build/
+**/*.onnx
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.cache/
+
+# Logs and runtime
+*.log
+logs/
+*.pid
+*.pid.lock
+
+# Databases and local state
+*.db
+*.sqlite
+*.sqlite3
+*.wal
+*.shm
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+.vscode/launch.json
+
+# Coverage
+coverage/
+.coverage
+**/.coverage

@@ -1,0 +1,20 @@
+version: 1
+profiles:
+  interactive:
+    model: qwen2.5:3b
+    endpoint: http://127.0.0.1:11434/v1
+    gpu_preferred: true
+  reasoning:
+    model: qwen2.5:7b
+    endpoint: http://127.0.0.1:11434/v1
+    gpu_preferred: true
+  heavy_gpu:
+    model: local-heavy-gpu
+    endpoint: http://127.0.0.1:11434/v1
+    gpu_preferred: true
+    long_running_allowed: true
+fallbacks:
+  - from: heavy_gpu
+    to: reasoning
+  - from: reasoning
+    to: interactive

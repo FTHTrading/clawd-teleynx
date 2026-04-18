@@ -1,0 +1,132 @@
+services:
+  nvidia-triton:
+    image: nvcr.io/nvidia/tritonserver:25.04-py3
+    container_name: nvidia-triton
+    restart: unless-stopped
+    command:
+      - tritonserver
+      - --model-repository=/models
+      - --http-port=8000
+      - --grpc-port=8001
+      - --metrics-port=8002
+      - --strict-model-config=false
+      - --model-control-mode=none
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./triton/models:/models
+
+  riva-speech:
+    image: nvcr.io/nvidia/riva/riva-speech:2.18.0
+    container_name: nvidia-riva-speech
+    restart: unless-stopped
+    profiles:
+      - speech
+    environment:
+      RIVA_API_KEY: ${RIVA_API_KEY}
+      RIVA_EULA: ${RIVA_EULA:-accept}
+      RIVA_API_NGC_ORG: ${RIVA_API_NGC_ORG:-nvidia}
+      RIVA_SERVER_HTTP_PORT: 50000
+      MODEL_REPOS: --model-repository /data/models
+    ports:
+      - "9010:50000"
+      - "50051:50051"
+    volumes:
+      - ./riva/models:/data/models
+    shm_size: "8gb"
+
+  inference-router:
+    build:
+      context: ../packages/inference-router
+    container_name: inference-router
+    restart: unless-stopped
+    depends_on:
+      - nvidia-triton
+    environment:
+      PORT: 8100
+      TRITON_URL: http://nvidia-triton:8000
+      OLLAMA_URL: http://host.docker.internal:11434
+      NIM_URL: http://host.docker.internal:8080
+    ports:
+      - "8100:8100"
+
+  speech-router:
+    build:
+      context: ../packages/speech-router
+    container_name: speech-router
+    restart: unless-stopped
+    depends_on:
+      - inference-router
+    environment:
+      PORT: 8200
+      RIVA_ASR_URL: http://nvidia-riva-speech:50000
+      RIVA_TTS_URL: http://nvidia-riva-speech:50000
+      WHISPER_URL: http://host.docker.internal:7700
+      PIPER_URL: http://host.docker.internal:7700
+    ports:
+      - "8200:8200"
+
+  clawdhub-registry:
+    image: python:3.11-slim
+    container_name: clawdhub-registry
+    restart: unless-stopped
+    command: python -m http.server 8099
+    ports:
+      - "8099:8099"
+    profiles:
+      - placeholder
+
+  # NIM LLM — nvidia/llama-3.1-nemotron-nano-8b-v1
+  # Run manually: docker run -d --name nvidia-assistant-llm --gpus all -p 8800:8000 \
+  #   -e NIM_PREFERRED_RUNTIME=vllm -e NIM_MAX_MODEL_LEN=8192 \
+  #   -e NGC_API_KEY=${NGC_API_KEY} -e NIM_CACHE_PATH=/opt/nim/.cache \
+  #   -v nim-cache:/opt/nim/.cache \
+  #   nvcr.io/nim/nvidia/llama-3.1-nemotron-nano-8b-v1:1.8.4
+  # NOTE: The image uses wget in healthcheck but wget is not available — override it:
+  nvidia-assistant-llm:
+    image: nvcr.io/nim/nvidia/llama-3.1-nemotron-nano-8b-v1:1.8.4
+    container_name: nvidia-assistant-llm
+    restart: unless-stopped
+    profiles:
+      - nim
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      NGC_API_KEY: ${NGC_API_KEY}
+      NIM_PREFERRED_RUNTIME: vllm
+      NIM_MAX_MODEL_LEN: "8192"
+      NIM_CACHE_PATH: /opt/nim/.cache
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/v1/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    ports:
+      - "8800:8000"
+    volumes:
+      - nim-cache:/opt/nim/.cache
+
+  clawdbot-v2:
+    build:
+      context: ../packages/clawdbot
+    container_name: clawdbot-v2
+    restart: unless-stopped
+    depends_on:
+      - inference-router
+      - speech-router
+    environment:
+      PORT: 8089
+      INFERENCE_ROUTER_URL: http://inference-router:8100
+      SPEECH_ROUTER_URL: http://speech-router:8200
+      OLLAMA_URL: http://host.docker.internal:11434
+      CLAWDHUB_URL: http://host.docker.internal:8099
+    ports:
+      - "8089:8089"

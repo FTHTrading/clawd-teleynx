@@ -1,0 +1,18 @@
+version: 1
+action_tiers:
+  level_0:
+    description: read_only
+    confirmation: none
+  level_1:
+    description: normal_operator
+    confirmation: optional
+  level_2:
+    description: system_mutating
+    confirmation: explicit
+  level_3:
+    description: destructive_or_security_sensitive
+    confirmation: dual
+audit:
+  require_for:
+    - level_2
+    - level_3

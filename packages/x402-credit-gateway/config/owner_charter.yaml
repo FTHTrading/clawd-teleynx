@@ -1,0 +1,13 @@
+version: 1
+owner: Kevan
+mode: sovereign-local
+mission:
+  primary: Operate UnyKorn locally with owner authority
+  priorities:
+    - truthful_status
+    - local_first_execution
+    - gpu_first_routing
+    - audit_all_critical_actions
+authority:
+  source: local_config_only
+  external_governance: disabled

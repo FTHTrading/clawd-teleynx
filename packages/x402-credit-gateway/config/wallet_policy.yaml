@@ -1,0 +1,10 @@
+version: 1
+wallet_registry_required: true
+default_mode: read_only
+real_actions:
+  require_confirmation_tier: level_3
+  require_audit: true
+  require_operator_note: true
+limits:
+  max_single_transfer_atp: "100000000000000000000"
+  daily_limit_atp: "1000000000000000000000"

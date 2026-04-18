@@ -1,0 +1,11 @@
+version: 1
+interval_seconds: 15
+failure_threshold: 3
+escalation_threshold: 5
+degraded_mode:
+  enabled: true
+  trigger: any_critical_service_down
+restart_backoff_seconds: [5, 15, 30, 60, 120]
+boot_validation:
+  timeout_seconds: 180
+  required_services: [jefe-kernel, ollama-local]

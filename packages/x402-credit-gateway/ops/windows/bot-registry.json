@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "bots": [
+    {"id": "clawdbot-runner", "endpoint": "http://127.0.0.1:8089/v1/tasks", "tier": "level_1"},
+    {"id": "clawdbot-marketing", "endpoint": "http://127.0.0.1:8101/v1/execute", "tier": "level_1"},
+    {"id": "clawdbot-coding", "endpoint": "http://127.0.0.1:8103/v1/execute", "tier": "level_2"},
+    {"id": "clawdbot-devops", "endpoint": "http://127.0.0.1:8104/v1/execute", "tier": "level_2"}
+  ]
+}

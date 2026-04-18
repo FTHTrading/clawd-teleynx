@@ -1,0 +1,22 @@
+version: 1
+bots:
+  - id: clawdbot-runner
+    owner: unykorn
+    role: orchestrator
+    endpoint: http://127.0.0.1:8089/v1/tasks
+    permission_tier: level_1
+  - id: clawdbot-marketing
+    owner: unykorn
+    role: content_execution
+    endpoint: http://127.0.0.1:8101/v1/execute
+    permission_tier: level_1
+  - id: clawdbot-coding
+    owner: unykorn
+    role: code_execution
+    endpoint: http://127.0.0.1:8103/v1/execute
+    permission_tier: level_2
+  - id: clawdbot-devops
+    owner: unykorn
+    role: infra_execution
+    endpoint: http://127.0.0.1:8104/v1/execute
+    permission_tier: level_2

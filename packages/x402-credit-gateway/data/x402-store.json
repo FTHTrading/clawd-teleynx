@@ -1,0 +1,171 @@
+{
+  "receipts": {
+    "ac5b45c3-5c0f-494c-91b2-308a3d57d646": {
+      "receipt_id": "ac5b45c3-5c0f-494c-91b2-308a3d57d646",
+      "user_id": "test-user-1",
+      "amount_atp": "1000000000000000000",
+      "service": "inference",
+      "status": "confirmed",
+      "created_at": "2026-04-18T10:24:44.130Z",
+      "updated_at": "2026-04-18T10:24:44.135Z",
+      "apostle_tx_hash": "staged_1776507884135_8fx8q1hkc",
+      "apostle_block_height": 999
+    },
+    "79772311-a5c1-4b00-b793-99e601802af5": {
+      "receipt_id": "79772311-a5c1-4b00-b793-99e601802af5",
+      "user_id": "real-proof-user",
+      "amount_atp": "1000000000000000000",
+      "service": "inference",
+      "status": "confirmed",
+      "created_at": "2026-04-18T10:32:50.776Z",
+      "updated_at": "2026-04-18T10:32:50.781Z",
+      "apostle_tx_hash": "d6b2ddc86de5745e4acd18f7a6257150f63d4cd0412402db8d7a3ad6d036f921",
+      "apostle_block_height": 147
+    },
+    "1207e2b9-c09e-400a-8ce8-e929f315dea0": {
+      "receipt_id": "1207e2b9-c09e-400a-8ce8-e929f315dea0",
+      "user_id": "real-proof-user-2",
+      "amount_atp": "2000000000000000000",
+      "service": "inference",
+      "status": "confirmed",
+      "created_at": "2026-04-18T10:33:42.588Z",
+      "updated_at": "2026-04-18T10:33:42.595Z",
+      "apostle_tx_hash": "2d08e5ec7cb272325eb9d28a6f6e050fa9c10d1f32293bf5d95f6b5aa7fcc953",
+      "apostle_block_height": 361
+    },
+    "dcf073f1-f892-410c-99ff-c5d40a41f950": {
+      "receipt_id": "dcf073f1-f892-410c-99ff-c5d40a41f950",
+      "user_id": "true-chain-proof-user",
+      "amount_atp": "1000000000000000000",
+      "service": "inference",
+      "status": "pending",
+      "created_at": "2026-04-18T10:42:42.094Z",
+      "updated_at": "2026-04-18T10:42:42.094Z"
+    },
+    "0f266c2e-c0f1-466b-b12d-c133cdd87c7a": {
+      "receipt_id": "0f266c2e-c0f1-466b-b12d-c133cdd87c7a",
+      "user_id": "true-chain-proof-user",
+      "amount_atp": "1000000000000000000",
+      "service": "inference",
+      "status": "confirmed",
+      "created_at": "2026-04-18T10:43:59.885Z",
+      "updated_at": "2026-04-18T10:43:59.906Z",
+      "apostle_tx_hash": "bb0e6451278d2857b728a6f1cd59a82a43a6ec334b1b08c7da48d08d18010c50",
+      "apostle_block_height": 1
+    },
+    "0ec45743-dd30-49f8-8715-aae0fc927931": {
+      "receipt_id": "0ec45743-dd30-49f8-8715-aae0fc927931",
+      "user_id": "telegram-smoke",
+      "amount_atp": "1000000000000000",
+      "service": "operator-check",
+      "action_id": "c5ab196cd267",
+      "status": "confirmed",
+      "created_at": "2026-04-18T11:23:31.673Z",
+      "updated_at": "2026-04-18T11:23:31.700Z",
+      "apostle_tx_hash": "staged_1776511411700_mzj1lp5fl",
+      "apostle_block_height": 999
+    }
+  },
+  "idempotency": {
+    "test-1776507884122": {
+      "idempotency_key": "test-1776507884122",
+      "request_hash": "test-user-1:1000000000000000000:inference",
+      "receipt_id": "ac5b45c3-5c0f-494c-91b2-308a3d57d646",
+      "status": "pending",
+      "created_at": "2026-04-18T10:24:44.130Z",
+      "expires_at": "2026-04-19T10:24:44.130Z"
+    },
+    "real-proof-1776508370763": {
+      "idempotency_key": "real-proof-1776508370763",
+      "request_hash": "real-proof-user:1000000000000000000:inference",
+      "receipt_id": "79772311-a5c1-4b00-b793-99e601802af5",
+      "status": "pending",
+      "created_at": "2026-04-18T10:32:50.776Z",
+      "expires_at": "2026-04-19T10:32:50.776Z"
+    },
+    "real-proof-1776508422582": {
+      "idempotency_key": "real-proof-1776508422582",
+      "request_hash": "real-proof-user-2:2000000000000000000:inference",
+      "receipt_id": "1207e2b9-c09e-400a-8ce8-e929f315dea0",
+      "status": "pending",
+      "created_at": "2026-04-18T10:33:42.588Z",
+      "expires_at": "2026-04-19T10:33:42.588Z"
+    },
+    "true-chain-proof-1776508962080": {
+      "idempotency_key": "true-chain-proof-1776508962080",
+      "request_hash": "true-chain-proof-user:1000000000000000000:inference",
+      "receipt_id": "dcf073f1-f892-410c-99ff-c5d40a41f950",
+      "status": "pending",
+      "created_at": "2026-04-18T10:42:42.094Z",
+      "expires_at": "2026-04-19T10:42:42.094Z"
+    },
+    "true-chain-proof-1776509039878": {
+      "idempotency_key": "true-chain-proof-1776509039878",
+      "request_hash": "true-chain-proof-user:1000000000000000000:inference",
+      "receipt_id": "0f266c2e-c0f1-466b-b12d-c133cdd87c7a",
+      "status": "pending",
+      "created_at": "2026-04-18T10:43:59.885Z",
+      "expires_at": "2026-04-19T10:43:59.885Z"
+    },
+    "c5ab196cd267": {
+      "idempotency_key": "c5ab196cd267",
+      "request_hash": "telegram-smoke:1000000000000000:operator-check",
+      "receipt_id": "0ec45743-dd30-49f8-8715-aae0fc927931",
+      "status": "pending",
+      "created_at": "2026-04-18T11:23:31.673Z",
+      "expires_at": "2026-04-19T11:23:31.673Z"
+    }
+  },
+  "correlation": {
+    "corr_1776507884135_4e07tif1u": {
+      "correlation_id": "corr_1776507884135_4e07tif1u",
+      "receipt_id": "ac5b45c3-5c0f-494c-91b2-308a3d57d646",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "staged_1776507884135_8fx8q1hkc",
+      "apostle_block_height": 999,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-04-18T10:24:44.135Z",
+      "created_at": "2026-04-18T10:24:44.135Z"
+    },
+    "corr_1776508370781_lfpuq9dwr": {
+      "correlation_id": "corr_1776508370781_lfpuq9dwr",
+      "receipt_id": "79772311-a5c1-4b00-b793-99e601802af5",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "d6b2ddc86de5745e4acd18f7a6257150f63d4cd0412402db8d7a3ad6d036f921",
+      "apostle_block_height": 147,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-04-18T10:32:50.781Z",
+      "created_at": "2026-04-18T10:32:50.781Z"
+    },
+    "corr_1776508422595_on8kvqe3l": {
+      "correlation_id": "corr_1776508422595_on8kvqe3l",
+      "receipt_id": "1207e2b9-c09e-400a-8ce8-e929f315dea0",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "2d08e5ec7cb272325eb9d28a6f6e050fa9c10d1f32293bf5d95f6b5aa7fcc953",
+      "apostle_block_height": 361,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-04-18T10:33:42.595Z",
+      "created_at": "2026-04-18T10:33:42.595Z"
+    },
+    "corr_1776509039906_q5bglruff": {
+      "correlation_id": "corr_1776509039906_q5bglruff",
+      "receipt_id": "0f266c2e-c0f1-466b-b12d-c133cdd87c7a",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "bb0e6451278d2857b728a6f1cd59a82a43a6ec334b1b08c7da48d08d18010c50",
+      "apostle_block_height": 1,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-04-18T10:43:59.906Z",
+      "created_at": "2026-04-18T10:43:59.906Z"
+    },
+    "corr_1776511411700_8prgo0cai": {
+      "correlation_id": "corr_1776511411700_8prgo0cai",
+      "receipt_id": "0ec45743-dd30-49f8-8715-aae0fc927931",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "staged_1776511411700_mzj1lp5fl",
+      "apostle_block_height": 999,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-04-18T11:23:31.700Z",
+      "created_at": "2026-04-18T11:23:31.700Z"
+    }
+  }
+}

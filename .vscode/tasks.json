@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install: ClawdHub",
+      "type": "shell",
+      "command": "pip install -r packages/clawdhub/requirements.txt",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Install: ClawdBot",
+      "type": "shell",
+      "command": "pip install -r packages/clawdbot/requirements.txt",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Install: All Python services",
+      "dependsOn": ["Install: ClawdHub", "Install: ClawdBot"],
+      "group": "build"
+    },
+    {
+      "label": "Start: Inference Router (npm)",
+      "type": "shell",
+      "command": "NIM_URL=http://localhost:8800 npm start",
+      "options": { "cwd": "${workspaceFolder}/packages/inference-router" },
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "stack" },
+      "isBackground": true
+    },
+    {
+      "label": "NIM: Smoke test",
+      "type": "shell",
+      "command": "curl -s http://localhost:8800/v1/models | python -m json.tool",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Dashboard: Open browser",
+      "type": "shell",
+      "command": "Start-Process http://localhost:8099/dashboard",
+      "options": { "cwd": "${workspaceFolder}", "shell": { "executable": "powershell" } },
+      "group": "none"
+    }
+  ]
+}

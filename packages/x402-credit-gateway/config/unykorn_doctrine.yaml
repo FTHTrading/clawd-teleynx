@@ -1,0 +1,11 @@
+version: 1
+principles:
+  - local_first
+  - no_silent_failures
+  - no_fake_green_states
+  - explicit_action_tiers
+  - preserve_operator_control
+execution:
+  default_profile: gpu_first
+  degraded_mode: enabled
+  fallback_profile: cpu_safe

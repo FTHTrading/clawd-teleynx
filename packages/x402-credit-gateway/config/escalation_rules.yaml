@@ -1,0 +1,11 @@
+version: 1
+rules:
+  - id: repeated_crash
+    condition: restart_count >= 5
+    action: alert_critical
+  - id: prolonged_degraded
+    condition: degraded_duration_seconds >= 600
+    action: alert_high
+  - id: wallet_policy_violation
+    condition: wallet_action_denied
+    action: audit_and_alert

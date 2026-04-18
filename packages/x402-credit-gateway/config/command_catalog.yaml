@@ -1,0 +1,25 @@
+version: 1
+commands:
+  - id: service.status
+    category: infra/service
+    permission_tier: level_0
+  - id: service.restart
+    category: infra/service
+    permission_tier: level_2
+    confirmation: explicit
+  - id: bot.dispatch
+    category: bot-control
+    permission_tier: level_1
+  - id: wallet.readiness
+    category: wallet/x402
+    permission_tier: level_0
+  - id: wallet.transfer_real
+    category: wallet/x402
+    permission_tier: level_3
+    confirmation: dual
+  - id: model.route
+    category: model/ml
+    permission_tier: level_1
+  - id: watchdog.force_check
+    category: observability
+    permission_tier: level_1

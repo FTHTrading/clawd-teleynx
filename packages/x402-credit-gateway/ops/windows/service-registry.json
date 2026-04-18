@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "services": [
+    {
+      "name": "jefe-kernel",
+      "command": "node",
+      "args": ["dist/index.js"],
+      "workdir": "C:/Users/Kevan/UnyKorn-X402-aws/packages/x402-credit-gateway",
+      "envFile": "ops/windows/env/jefe-kernel.env",
+      "startup": "automatic",
+      "restartPolicy": "on-failure",
+      "healthProbe": "http://127.0.0.1:4020/health",
+      "criticality": "critical",
+      "dependsOn": ["ollama-local"]
+    },
+    {
+      "name": "ollama-local",
+      "command": "ollama",
+      "args": ["serve"],
+      "workdir": "C:/Users/Kevan",
+      "envFile": "ops/windows/env/ollama.env",
+      "startup": "automatic",
+      "restartPolicy": "on-failure",
+      "healthProbe": "http://127.0.0.1:11434/api/tags",
+      "criticality": "critical",
+      "dependsOn": []
+    },
+    {
+      "name": "apostle-chain",
+      "command": "apostle-chain.exe",
+      "args": [],
+      "workdir": "C:/Users/Kevan/apostle-chain",
+      "envFile": "ops/windows/env/apostle.env",
+      "startup": "automatic",
+      "restartPolicy": "on-failure",
+      "healthProbe": "http://127.0.0.1:7332/health",
+      "criticality": "high",
+      "dependsOn": []
+    },
+    {
+      "name": "clawdbot-runner",
+      "command": "python",
+      "args": ["runner.py"],
+      "workdir": "C:/Users/Kevan/UnyKorn-X402-aws/packages/clawdbot",
+      "envFile": "ops/windows/env/clawdbot.env",
+      "startup": "automatic",
+      "restartPolicy": "on-failure",
+      "healthProbe": "http://127.0.0.1:8089/health",
+      "criticality": "high",
+      "dependsOn": ["ollama-local"]
+    }
+  ]
+}

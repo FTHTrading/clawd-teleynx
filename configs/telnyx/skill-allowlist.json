@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "policy": "curated-import-only",
+  "allow": [
+    "SKILL.md",
+    "README.md",
+    "api/**/SKILL.md",
+    "tools/stt/**",
+    "tools/tts/**",
+    "tools/embeddings/**",
+    "tools/rag/**"
+  ],
+  "deny": [
+    "**/*.sh",
+    "**/*.ps1",
+    "**/*.bat",
+    "tools/network/**",
+    "tools/10dlc-registration/**",
+    "getting-started/telnyx-bot-signup/**",
+    "getting-started/telnyx-freemium-upgrade/**"
+  ],
+  "requiresHumanApproval": [
+    "balance_topup",
+    "payment_method_changes",
+    "account_upgrade",
+    "number_purchase",
+    "campaign_registration_10dlc"
+  ]
+}

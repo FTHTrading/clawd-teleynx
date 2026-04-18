@@ -1,0 +1,11 @@
+version: 1
+readiness_checks:
+  - gateway_health
+  - apostle_health
+  - wallet_registry_loaded
+  - settlement_routes_available
+charge_policy:
+  staged_allowed: true
+  real_allowed: true
+  require_idempotency: true
+  require_correlation: true
