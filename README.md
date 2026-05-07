@@ -8,6 +8,7 @@ Unified Clawd/ClawHub runtime for AI execution, voice, routing, and x402 settlem
 - `packages/clawdhub/`: operator dashboard and backend health surface (FastAPI, port 8099)
 - `packages/inference-router/`: model routing (Triton/NIM/Ollama)
 - `packages/speech-router/`: speech routing (Riva/Whisper/Piper)
+- `packages/x402-credit-gateway/`: x402 receipt + settlement gateway (Express, port 8402)
 - `docker-compose.nvidia.yml`: RTX 5090 stack composition
 
 ## Integration Goal
@@ -37,6 +38,11 @@ python packages/clawdhub/hub.py
 
 # run executor
 python packages/clawdbot/runner.py
+
+# run x402 gateway (for paid execution paths)
+cd packages/x402-credit-gateway
+npm install
+npm run dev
 ```
 
 ## Docker Stack
@@ -64,3 +70,4 @@ git push -u origin main
 
 - Do not commit secrets (`.env`, private keys, API tokens).
 - Use the allowlist and review docs before importing third-party skills.
+- Set `X402_GATEWAY_URL` for ClawdBot if the gateway is not on `http://localhost:8402`.
