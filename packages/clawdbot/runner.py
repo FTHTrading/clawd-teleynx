@@ -21,6 +21,7 @@ INFERENCE_ROUTER_URL = os.getenv("INFERENCE_ROUTER_URL", "http://localhost:8100"
 SPEECH_ROUTER_URL = os.getenv("SPEECH_ROUTER_URL", "http://localhost:8200")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 CLAWDHUB_URL = os.getenv("CLAWDHUB_URL", "http://localhost:8099")
+X402_GATEWAY_URL = os.getenv("X402_GATEWAY_URL", "http://localhost:8402")
 PORT = int(os.getenv("PORT", "8089"))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(name)s] %(levelname)s %(message)s")
@@ -40,6 +41,8 @@ class ActionType(str, Enum):
     DEVOPS_DEPLOY = "devops_deploy"
     DEVOPS_MONITOR = "devops_monitor"
     ANALYSIS = "analysis"
+    X402_REQUEST_PAYMENT = "x402_request_payment"
+    X402_VERIFY_RECEIPT = "x402_verify_receipt"
 
 
 class ActionRequest(BaseModel):
@@ -322,9 +325,42 @@ class DevOpsExecutor(BaseExecutor):
         return {"error": f"DevOps executor does not handle {action}"}
 
 
+class X402Executor(BaseExecutor):
+    name = "x402"
+    actions = [ActionType.X402_REQUEST_PAYMENT, ActionType.X402_VERIFY_RECEIPT]
+
+    async def execute(self, action: ActionType, payload: dict[str, Any]) -> dict[str, Any]:
+        assert http_client is not None
+
+        if action == ActionType.X402_REQUEST_PAYMENT:
+            body = {
+                "consumer_id": payload.get("consumer_id"),
+                "service_id": payload.get("service_id"),
+                "amount_atp": payload.get("amount_atp"),
+                "memo": payload.get("memo", "clawdbot execution"),
+            }
+            resp = await http_client.post(f"{X402_GATEWAY_URL}/v1/request-payment", json=body)
+            resp.raise_for_status()
+            data = resp.json()
+            data["backend"] = "x402-credit-gateway"
+            return data
+
+        if action == ActionType.X402_VERIFY_RECEIPT:
+            receipt_id = payload.get("receipt_id")
+            if not receipt_id:
+                return {"error": "receipt_id is required"}
+            resp = await http_client.get(f"{X402_GATEWAY_URL}/v1/receipts/{receipt_id}")
+            resp.raise_for_status()
+            data = resp.json()
+            data["backend"] = "x402-credit-gateway"
+            return data
+
+        return {"error": f"X402 executor does not handle {action}"}
+
+
 # ─── Register all executors ───
 def register_executors():
-    for cls in [NVIDIACoreExecutor, MarketingExecutor, CodingExecutor, DevOpsExecutor]:
+    for cls in [NVIDIACoreExecutor, MarketingExecutor, CodingExecutor, DevOpsExecutor, X402Executor]:
         inst = cls()
         EXECUTORS[inst.name] = inst
         logger.info(f"Registered executor: {inst.name} ({[a.value for a in inst.actions]})")
@@ -354,6 +390,7 @@ async def health():
         ("inference_router", f"{INFERENCE_ROUTER_URL}/health"),
         ("speech_router", f"{SPEECH_ROUTER_URL}/health"),
         ("ollama", f"{OLLAMA_URL}/api/tags"),
+        ("x402_gateway", f"{X402_GATEWAY_URL}/health"),
     ]:
         try:
             r = await http_client.get(url, timeout=3.0)
@@ -452,6 +489,15 @@ async def tts_shortcut(body: dict[str, Any]):
     return await execute_action(ActionRequest(action=ActionType.TEXT_TO_SPEECH, payload=body))
 
 
+@app.post("/v1/x402/request-payment")
+async def x402_request_payment_shortcut(body: dict[str, Any]):
+    return await execute_action(ActionRequest(action=ActionType.X402_REQUEST_PAYMENT, payload=body))
+
+
+@app.post("/v1/x402/verify-receipt")
+async def x402_verify_receipt_shortcut(body: dict[str, Any]):
+    return await execute_action(ActionRequest(action=ActionType.X402_VERIFY_RECEIPT, payload=body))
+
+
 if __name__ == "__main__":
     uvicorn.run("runner:app", host="0.0.0.0", port=PORT, log_level="info", reload=False)
-
