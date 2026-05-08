@@ -64,6 +64,30 @@
       "updated_at": "2026-04-18T11:23:31.700Z",
       "apostle_tx_hash": "staged_1776511411700_mzj1lp5fl",
       "apostle_block_height": 999
+    },
+    "8f0b8b77-2d1d-4102-99ae-a4ce55ea1447": {
+      "receipt_id": "8f0b8b77-2d1d-4102-99ae-a4ce55ea1447",
+      "user_id": "dev-user-001",
+      "amount_atp": "25",
+      "service": "clawd-test",
+      "action_id": "smoke-test-001",
+      "status": "confirmed",
+      "created_at": "2026-05-07T15:57:11.379Z",
+      "updated_at": "2026-05-07T15:57:16.201Z",
+      "apostle_tx_hash": "staged_1778169436201_77r1tm6xd",
+      "apostle_block_height": 999
+    },
+    "d7c2ae3b-fa2f-4a08-a43d-9d946ceda4c1": {
+      "receipt_id": "d7c2ae3b-fa2f-4a08-a43d-9d946ceda4c1",
+      "user_id": "dev-user-001",
+      "amount_atp": "25",
+      "service": "clawd-test",
+      "action_id": "smoke-test-001",
+      "status": "confirmed",
+      "created_at": "2026-05-07T15:57:58.530Z",
+      "updated_at": "2026-05-07T15:57:58.572Z",
+      "apostle_tx_hash": "staged_1778169478572_jzkn2h412",
+      "apostle_block_height": 999
     }
   },
   "idempotency": {
@@ -114,6 +138,22 @@
       "status": "pending",
       "created_at": "2026-04-18T11:23:31.673Z",
       "expires_at": "2026-04-19T11:23:31.673Z"
+    },
+    "smoke-639137518313649861": {
+      "idempotency_key": "smoke-639137518313649861",
+      "request_hash": "dev-user-001:25:clawd-test",
+      "receipt_id": "8f0b8b77-2d1d-4102-99ae-a4ce55ea1447",
+      "status": "pending",
+      "created_at": "2026-05-07T15:57:11.379Z",
+      "expires_at": "2026-05-08T15:57:11.379Z"
+    },
+    "smoke-639137518785262249": {
+      "idempotency_key": "smoke-639137518785262249",
+      "request_hash": "dev-user-001:25:clawd-test",
+      "receipt_id": "d7c2ae3b-fa2f-4a08-a43d-9d946ceda4c1",
+      "status": "pending",
+      "created_at": "2026-05-07T15:57:58.530Z",
+      "expires_at": "2026-05-08T15:57:58.530Z"
     }
   },
   "correlation": {
@@ -166,6 +206,26 @@
       "settlement_status": "confirmed",
       "confirmed_at": "2026-04-18T11:23:31.700Z",
       "created_at": "2026-04-18T11:23:31.700Z"
+    },
+    "corr_1778169436201_i09i8ztfs": {
+      "correlation_id": "corr_1778169436201_i09i8ztfs",
+      "receipt_id": "8f0b8b77-2d1d-4102-99ae-a4ce55ea1447",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "staged_1778169436201_77r1tm6xd",
+      "apostle_block_height": 999,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-05-07T15:57:16.201Z",
+      "created_at": "2026-05-07T15:57:16.201Z"
+    },
+    "corr_1778169478572_9s7lw9ug2": {
+      "correlation_id": "corr_1778169478572_9s7lw9ug2",
+      "receipt_id": "d7c2ae3b-fa2f-4a08-a43d-9d946ceda4c1",
+      "apostle_agent_id": "87724c76-da93-4b1a-9fa6-271ba856338e",
+      "apostle_tx_hash": "staged_1778169478572_jzkn2h412",
+      "apostle_block_height": 999,
+      "settlement_status": "confirmed",
+      "confirmed_at": "2026-05-07T15:57:58.572Z",
+      "created_at": "2026-05-07T15:57:58.572Z"
     }
   }
 }

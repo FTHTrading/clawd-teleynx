@@ -395,6 +395,174 @@ app.get("/v1/operator-status", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * x402 probe — lightweight connectivity check for external agents
+ */
+app.get("/v1/x402/probe", async (_req: Request, res: Response) => {
+  try {
+    const chainHealth = await apostle.health();
+    const dbHealth = db.health();
+    res.json({
+      ok: true,
+      protocol: "x402",
+      chain_id: chainHealth.chain_id,
+      chain_operational: chainHealth.operational,
+      persistence_ok: dbHealth.ok,
+      receipts_stored: dbHealth.receipts,
+      signing_mode: process.env.X402_SIGN_REAL === "true" ? "real" : "staged",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    res.status(503).json({ ok: false, error: String(error) });
+  }
+});
+
+/**
+ * x402 request-payment — proper 402 Payment Required flow.
+ *
+ * If the request carries a valid X-Payment-Receipt header the receipt is
+ * verified and the service responds 200 with confirmation.
+ * Without the header the service responds 402 with a payment descriptor
+ * (asset, amount, chain_id, payTo, nonce, deadline) which the client must
+ * fulfil before retrying with X-Payment-Receipt.
+ */
+app.post("/v1/x402/request-payment", async (req: Request, res: Response) => {
+  try {
+    const receiptHeader = req.headers["x-payment-receipt"] as string | undefined;
+    const { service, action_id, amount_atp, user_id } = req.body as {
+      service?: string;
+      action_id?: string;
+      amount_atp?: string;
+      user_id?: string;
+    };
+
+    if (!service || !amount_atp || !user_id) {
+      return res.status(400).json({ error: "Missing required fields: service, amount_atp, user_id" });
+    }
+
+    // Step 4–5: client retried with X-Payment-Receipt — verify it
+    if (receiptHeader) {
+      let parsed: { receipt_id?: string; tx_hash?: string } = {};
+      try {
+        parsed = JSON.parse(Buffer.from(receiptHeader, "base64").toString("utf8"));
+      } catch {
+        return res.status(400).json({ error: "X-Payment-Receipt is not valid base64 JSON" });
+      }
+
+      const receipt = parsed.receipt_id ? db.getReceipt(parsed.receipt_id) : null;
+      if (!receipt || receipt.status !== "confirmed") {
+        return res.status(402).json({
+          error: "Receipt not found or not confirmed",
+          hint: "Obtain a confirmed receipt via /v1/execute-charge then retry",
+        });
+      }
+
+      const chainHealth = await apostle.health();
+      return res.status(200).json({
+        ok: true,
+        verified: true,
+        receipt_id: receipt.receipt_id,
+        correlation: receipt.correlation,
+        service,
+        action_id: action_id || null,
+        chain_id: chainHealth.chain_id,
+        message: "Payment verified — service access granted",
+      });
+    }
+
+    // Steps 1–3: no receipt — issue 402 with payment descriptor
+    const nonce = uuidv4();
+    const deadline = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 min
+    const payToAgent = process.env.X402_SETTLEMENT_TO_AGENT_ID || OPERATORS["x402-credit-pool"];
+    const chainHealth = await apostle.health();
+
+    return res.status(402).json({
+      error: "Payment Required",
+      payment_descriptor: {
+        asset: "ATP",
+        amount: amount_atp,
+        chain_id: chainHealth.chain_id,
+        payTo: payToAgent,
+        nonce,
+        deadline,
+        service,
+        action_id: action_id || null,
+      },
+      instructions: [
+        "1. POST /v1/request-payment to obtain a receipt_id",
+        "2. POST /v1/execute-charge with receipt_id to settle on Apostle chain",
+        "3. Retry this endpoint with header: X-Payment-Receipt: <base64(JSON receipt)>",
+      ],
+    });
+  } catch (error) {
+    res.status(500).json({ ok: false, error: String(error) });
+  }
+});
+
+/**
+ * x402 verify-receipt — standalone receipt verification against Apostle chain.
+ * Accepts { receipt_id } and confirms the tx_hash exists in the local ledger
+ * correlation. Does not re-execute; only reads stored state.
+ */
+app.post("/v1/x402/verify-receipt", async (req: Request, res: Response) => {
+  try {
+    const { receipt_id } = req.body as { receipt_id?: string };
+    if (!receipt_id) {
+      return res.status(400).json({ error: "Missing receipt_id" });
+    }
+
+    const receipt = db.getReceipt(receipt_id);
+    if (!receipt) {
+      return res.status(404).json({ ok: false, error: "Receipt not found" });
+    }
+
+    const verified = receipt.status === "confirmed" && !!receipt.correlation?.apostle_tx_hash;
+    const chainHealth = await apostle.health();
+
+    res.json({
+      ok: verified,
+      receipt_id,
+      status: receipt.status,
+      verified,
+      chain_id: chainHealth.chain_id,
+      apostle_tx_hash: receipt.correlation?.apostle_tx_hash || null,
+      apostle_block_height: receipt.correlation?.apostle_block_height || null,
+      correlation_id: receipt.correlation?.correlation_id || null,
+      user_id: receipt.user_id,
+      amount_atp: receipt.amount_atp,
+      service: receipt.service,
+      created_at: receipt.created_at,
+      message: verified
+        ? "Receipt confirmed on Apostle chain (chain_id 7332, ATP/Ed25519)"
+        : "Receipt exists but is not yet confirmed — run /v1/execute-charge first",
+    });
+  } catch (error) {
+    res.status(500).json({ ok: false, error: String(error) });
+  }
+});
+
+app.get("/", (_req: Request, res: Response) => {
+  res.json({
+    ok: true,
+    service: "x402-credit-gateway",
+    version: "2.0.0",
+    status: "online",
+    mode: process.env.X402_SIGN_REAL === "true" ? "real" : "staged",
+    endpoints: [
+      "/health",
+      "/v1/x402/probe",
+      "/v1/x402/request-payment",
+      "/v1/x402/verify-receipt",
+      "/v1/operator-status",
+      "/v1/request-payment",
+      "/v1/execute-charge",
+      "/v1/receipts",
+      "/v1/receipt/:receipt_id",
+    ],
+    note: "x402 payment flow: POST /v1/x402/request-payment → 402 descriptor → charge → retry with X-Payment-Receipt",
+  });
+});
+
 const PORT = process.env.PORT || 4020;
 app.listen(PORT, () => {
   console.log(`
@@ -412,3 +580,4 @@ app.listen(PORT, () => {
 ╚════════════════════════════════════════════════════════════════╝
   `);
 });
+
